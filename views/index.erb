@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <style type="text/css">
+      html, body { height: 100%; margin: 0; padding: 0; }
+      #map { height: 100%; }
+    </style>
+
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD9iZ14iYnAXZJl22ovp_piv2sHcHGWuwg"></script>
+
+    <script>
+      navigator.geolocation.getCurrentPosition(function(position) {
+        var xhttp = new XMLHttpRequest();
+        var endpoint_url = "nearby.json?lat=" + position.coords.latitude + "&long=" + position.coords.longitude;
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: position.coords.latitude, lng: position.coords.longitude},
+          zoom: 14
+        });
+
+        xhttp.responseType = "json";
+        xhttp.onreadystatechange = function() {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var tweets = xhttp.response;
+            
+            tweets.forEach(function(tweet, i) {
+              if (tweet["geo"] && tweet["geo"]["coordinates"]) {
+                
+                
+                var tweet_loc = {
+                  lat: tweet["geo"]["coordinates"][0],
+                  lng: tweet["geo"]["coordinates"][1]
+                };
+
+                var marker = new google.maps.Marker({
+                  animation: google.maps.Animation.DROP,
+                  position: tweet_loc, 
+                  map: map,
+                  title: 'Hello World!'
+                });
+
+                var infowindow = new google.maps.InfoWindow({
+                  content: tweet["text"] 
+                });
+
+                marker.addListener('click', function() {
+                  infowindow.open(map, marker);
+                });
+
+
+              } else {
+                console.log("Bad tweet");
+              }
+            });
+          }
+        };
+
+        xhttp.open("GET", endpoint_url, true);
+        xhttp.send();
+      });
+  
+    </script>
+
+  </head>
+
+  <body>
+    <div id="current_geo"></div>
+    <div id="tweets"></div>
+    <div id="map">Loading...</div>
+
+
+    
+
+    
+  </body>
+
+</html>
