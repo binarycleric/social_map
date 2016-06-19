@@ -9,6 +9,8 @@ $client = Twitter::REST::Client.new do |config|
   config.access_token_secret = ENV["TWITTER_ACCESS_TOKEN_SECRET"] 
 end
 
+set :port, (ENV['PORT'] || 5000) 
+
 get "/nearby.json" do
   content_type :json
 
