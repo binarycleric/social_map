@@ -15,8 +15,10 @@ get "/nearby.json" do
 
   lat = params["lat"] || 37.7821120598956 
   long = params["long"] || -122.400612831116
+  tweets = $client.search("", result_type: "recent", 
+                              geocode: "#{lat},#{long},3mi", 
+                              count: 100)
 
-  tweets = $client.search("", result_type: "recent", geocode: "#{lat},#{long},2mi")
   tweets.to_a.map(&:to_h).to_json
 end
 
